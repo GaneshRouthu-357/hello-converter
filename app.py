@@ -18,7 +18,27 @@ def get_columns(ds):
         return columns
     except KeyError:
         print(f'Schema not found for {ds}')
-        return     
+        return    
+
+
+def process_file(src_base_dir,ds,tgt_base_dir):
+
+     for file in glob.glob(f'{src_base_dir}/{ds}/part*'):
+
+        df = pd.read_csv(file, names=get_columns(ds))
+
+        os.makedirs(f'{tgt_base_dir}/{ds}', exist_ok=True)
+
+        df.to_json(
+
+            f'{tgt_base_dir}/{ds}/part-{str(uuid.uuid1())}.json',
+
+            orient='records',
+
+            lines=True
+
+         )
+        print(f'Number of records processed for {os.path.split(file)[1]} in {ds} is {df.shape[0]}')
 
 if __name__=='__main__':
     print(get_columns('departments'))
@@ -34,26 +54,7 @@ def main():
 
         if os.path.isdir(path):
 
-            ds = os.path.split(path)[1]
-
-            for file in glob.glob(f'{path}/part*'):
-
-                df = pd.read_csv(file, names=get_columns(ds))
-
-                os.makedirs(f'{tgt_base_dir}/{ds}', exist_ok=True)
-
-                df.to_json(
-
-                    f'{tgt_base_dir}/{ds}/part-{str(uuid.uuid1())}.json',
-
-                    orient='records',
-
-                    lines=True
-
-                )
-
-                print(f'Number of records processed for {os.path.split(file)[1]} in {ds} is {df.shape[0]}')
-
+            process_file(src_base_dir,os.path.split(path)[1],tgt_base_dir)
  
 
  
