@@ -49,12 +49,20 @@ if __name__=='__main__':
 def main():
     src_base_dir =os.environ['SRC_BASE_DIR']
     tgt_base_dir = os.environ['TGT_BASE_DIR']
+    datasets = os.environ.get('DATASETS')
+    if not datasets:
 
-    for path in glob.glob(f'{src_base_dir}/*'):
+       for path in glob.glob(f'{src_base_dir}/*'):
 
-        if os.path.isdir(path):
+           if os.path.isdir(path):
 
-            process_file(src_base_dir,os.path.split(path)[1],tgt_base_dir)
+               process_file(src_base_dir,os.path.split(path)[1],tgt_base_dir)
+    else:
+        dirs=datasets.split(',')
+        for ds in dirs:
+             process_file(src_base_dir,ds,tgt_base_dir)
+
+                  
  
 
  
